@@ -88,6 +88,15 @@ function SWEP:Reload()
 
 end
 
+local function Clamp(value, min, max)
+	print(value,min,max)
+	if value >= max then
+		value = max - 1
+	elseif value <= min then
+		value = min + 1
+	end
+end
+
 function SWEP:DrawHUD()
 	local ply = self.Owner
 	if not self.IsLooking then return end
@@ -96,14 +105,13 @@ function SWEP:DrawHUD()
 	-- pitch/x, roll/y, yaw/z
 	
 	EyeAng.x = math.Clamp(EyeAng.x, -30, 24)
-	--EyeAng.y = math.Clamp(EyeAng.y, 80, -80)
-	print(EyeAng)
+	local doorang = self.Door:GetAngles( )
+
+	EyeAng.y = math.Clamp(EyeAng.y, doorang.y-50, doorang.y+50) -- This works on only 1 door angle
 	
-	-- To Do: Find a good way of finding the current direction, rounding it to 90, 180, -90, or 0, and clamping the view based off that.
-	-- Fix the door position not be centered on a certain axies
-	
+	print(EyeAng.y,doorang.y)
+	--print(doorang.y)
 	local CamData = {}
-	
 	CamData.angles = Angle(EyeAng.x, EyeAng.y, 0) -- Angles, supposed to be clamped
 	local footpos = self.FootPos -- Declared once because jumping
 	local doorpos = self.Door:GetPos() + self.Door:OBBCenter()
